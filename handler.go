@@ -7,9 +7,16 @@ import (
 )
 
 func uploadHandler (w http.ResponseWriter, r *http.Request) {
-
-	// parse from the body of request to get a json object
 	fmt.Println("Received one post request")
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type,Authorization")
+
+	if r.Method == "OPTIONS" {
+		return
+	}
+
+    // parse from the body of request to get a json object
 	decoder := json.NewDecoder(r.Body)
 
 	var p Post
