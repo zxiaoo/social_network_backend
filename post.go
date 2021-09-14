@@ -30,6 +30,21 @@ func searchPostsByUser(user string) ([]Post, error) {
 
 }
 
+func searchPostsByKeywords(keywords string) ([]Post, error) {
+	query := elastic.NewMatchQuery("message", keywords)
+	// there could be many keywords in the query, take "AND" for all of them
+	query.Operator("AND")
+	// if there is no keyword, return all the posts
+	if keywords == "" {
+		query.ZeroTermsQuery("all")
+	}
+	searchResult, err := readFromES(query, POST_INDEX)
+	if err != nil {
+		return nil, err
+	}
+	return getPostFromSearchResult(searchResult), nil
+}
+
 func getPostFromSearchResult(searchResult *elastic.SearchResult) []Post {
 	var ptype Post
 	var posts []Post
